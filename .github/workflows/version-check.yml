@@ -1,0 +1,32 @@
+name: Version Check Workflow
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on push to the main branch
+
+jobs:
+  version-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Read Version from version.txt
+        id: version
+        run: echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
+
+      - name: Check Version
+        run: |
+          CURRENT_VERSION=$VERSION
+          REQUIRED_VERSION="1.0"  # Replace with the minimum required version
+
+          echo "Current Version: $CURRENT_VERSION"
+          echo "Required Version: $REQUIRED_VERSION"
+
+          if [[ "$CURRENT_VERSION" < "$REQUIRED_VERSION" ]]; then
+            echo "The current version is less than the required version. Aborting."
+            exit 1
+          else
+            echo "Version check passed."
+          fi
